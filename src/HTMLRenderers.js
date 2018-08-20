@@ -43,7 +43,7 @@ export function img (htmlAttribs, children, convertedCSSStyles, passProps = {}) 
         passProps,
         styleSet: 'IMAGE'
     });
-    const { src, alt, width, height } = htmlAttribs;
+    const { src, alt, width, headers, height } = htmlAttribs;
     return (
         <HTMLImage
           source={{ uri: src }}
@@ -51,6 +51,7 @@ export function img (htmlAttribs, children, convertedCSSStyles, passProps = {}) 
           width={width}
           height={height}
           style={style}
+          headers={headers}
           {...passProps}
         />
     );
