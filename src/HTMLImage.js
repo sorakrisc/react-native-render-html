@@ -1,14 +1,16 @@
 import React, { PureComponent } from 'react';
-import { Image, View, Text } from 'react-native';
+import { Image, View, Modal, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
-import ImageZoom from 'react-native-image-pan-zoom';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 export default class HTMLImage extends PureComponent {
     constructor (props) {
         super(props);
         this.state = {
             width: props.imagesInitialDimensions.width,
-            height: props.imagesInitialDimensions.height
+            height: props.imagesInitialDimensions.height,
+            index: 0,
+            modalVisible: false
         };
     }
 
@@ -98,18 +100,67 @@ export default class HTMLImage extends PureComponent {
         );
     }
 
+    _renderHeader () {
+        return(
+            <View style={{flexDirection:"row", position: "absolute", left: 0, right: 0, top: 10}}>
+                <View style={{width:"90%"}}><Text>-</Text></View>
+                <View style={{margin:13, width:"10%"}}>
+                    <TouchableOpacity
+                        style={{
+                        }}
+                        onPress={() =>
+                            this.setState({
+                                modalVisible: false
+                            })
+                        }
+                    >
+
+                        <Image
+                            style={{height: 18, width: 18, margin: 3, resizeMode: "contain"}}
+                            source={require("../assets/images/access-denied.png")}
+                        />
+
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
     validImage (source, style, props = {}) {
+        const images = [{
+            // Simplest usage.
+            url: source.uri,
+            // You can pass props to <Image />.
+            props: {
+                source: source
+            }
+        }]
+        console.log("modalVisible",this.state.modalVisible)
         return (
-            <ImageZoom cropWidth={Dimensions.get('window').width}
-                       cropHeight={Dimensions.get('window').height}
-                       imageWidth={200}
-                       imageHeight={200}>
-                <Image
-                  source={source}
-                  style={[style, { width: this.state.width, height: this.state.height, resizeMode: 'cover' }]}
-                  {...props}
-                />
-            </ImageZoom>
+            <View>
+                <TouchableOpacity onPress={()=>this.setState({modalVisible: true})}>
+                    <Image
+                        source={source}
+                        style={[style, { width: this.state.width, height: this.state.height, resizeMode: 'cover' }]}
+                        {...props}
+                    />
+                </TouchableOpacity>
+                <Modal
+                    visible={this.state.modalVisible}
+                    transparent={true}
+                    onRequestClose={() => this.setState({ modalVisible: false })}
+                >
+                    <ImageViewer
+                        renderIndicator={(currentIndex, allSize) => this._renderHeader()}
+                        saveToLocalByLongPress={false}
+                        imageUrls={images}
+                        index={this.state.index}
+                        onSwipeDown={() => {
+                            this.setState({modalVisible:false});
+                        }}
+                        enableSwipeDown={true}
+                    />
+                </Modal>
+            </View>
         );
     }
 
