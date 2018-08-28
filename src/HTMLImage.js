@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Image, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
+import ImageZoom from 'react-native-image-pan-zoom';
 
 export default class HTMLImage extends PureComponent {
     constructor (props) {
@@ -99,11 +100,16 @@ export default class HTMLImage extends PureComponent {
 
     validImage (source, style, props = {}) {
         return (
-            <Image
-              source={source}
-              style={[style, { width: this.state.width, height: this.state.height, resizeMode: 'cover' }]}
-              {...props}
-            />
+            <ImageZoom cropWidth={Dimensions.get('window').width}
+                       cropHeight={Dimensions.get('window').height}
+                       imageWidth={200}
+                       imageHeight={200}>
+                <Image
+                  source={source}
+                  style={[style, { width: this.state.width, height: this.state.height, resizeMode: 'cover' }]}
+                  {...props}
+                />
+            </ImageZoom>
         );
     }
 
