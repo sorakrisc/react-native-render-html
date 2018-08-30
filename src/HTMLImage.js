@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Image, View, Modal, Text, TouchableOpacity } from 'react-native';
+import { Image, View, Modal, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -102,9 +102,8 @@ export default class HTMLImage extends PureComponent {
 
     _renderHeader () {
         return(
-            <View style={{flexDirection:"row", position: "absolute", left: 0, right: 0, top: 10}}>
-                <View style={{width:"90%"}}><Text>-</Text></View>
-                <View style={{margin:13, width:"10%"}}>
+            <SafeAreaView style={{flexDirection:"row-reverse", position:"absolute", width:"100%"}}>
+                <View style={{margin:13}}>
                     <TouchableOpacity
                         style={{
                         }}
@@ -116,13 +115,13 @@ export default class HTMLImage extends PureComponent {
                     >
 
                         <Image
-                            style={{height: 18, width: 18, margin: 3, resizeMode: "contain"}}
+                            style={{height: 16, width: 16, margin: 3, resizeMode: "contain"}}
                             source={require("../assets/images/access-denied.png")}
                         />
 
                     </TouchableOpacity>
                 </View>
-            </View>
+            </SafeAreaView>
         )
     }
     validImage (source, style, props = {}) {
@@ -150,7 +149,7 @@ export default class HTMLImage extends PureComponent {
                     onRequestClose={() => this.setState({ modalVisible: false })}
                 >
                     <ImageViewer
-                        renderIndicator={(currentIndex, allSize) => this._renderHeader()}
+                        renderIndicator={(currentIndex) => this._renderHeader()}
                         saveToLocalByLongPress={false}
                         imageUrls={images}
                         index={this.state.index}
