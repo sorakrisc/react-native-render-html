@@ -115,8 +115,8 @@ export default class HTMLImage extends PureComponent {
                         }
                     >
 
-                        <Image
-                            style={{height: 16, width: 16, margin: 3, resizeMode: "contain"}}
+                        <FastImage
+                            style={{height: 16, width: 16, margin: 3}}
                             source={require("../assets/images/access-denied.png")}
                         />
 
@@ -138,9 +138,9 @@ export default class HTMLImage extends PureComponent {
         return (
             <View>
                 <TouchableOpacity onPress={()=>this.setState({modalVisible: true})}>
-                    <Image
+                    <FastImage
                         source={source}
-                        style={[style, { width: this.state.width, height: this.state.height, resizeMode: 'cover' }]}
+                        style={[style, { width: this.state.width, height: this.state.height}]}
                         {...props}
                     />
                 </TouchableOpacity>
@@ -150,6 +150,7 @@ export default class HTMLImage extends PureComponent {
                     onRequestClose={() => this.setState({ modalVisible: false })}
                 >
                     <ImageViewer
+                        renderImage = {(props) => <FastImage {...props}/>}
                         renderIndicator={(currentIndex) => this._renderHeader()}
                         saveToLocalByLongPress={false}
                         imageUrls={images}
@@ -174,7 +175,7 @@ export default class HTMLImage extends PureComponent {
 
     render () {
         const { source, style, headers, passProps } = this.props;
-        if(headers) {
+        if (headers) {
             let src = {
                 uri: source.uri,
                 headers: headers
