@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Image, View, Modal, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import FastImage from 'react-native-fast-image';
 
 export default class HTMLImage extends PureComponent {
     constructor (props) {
