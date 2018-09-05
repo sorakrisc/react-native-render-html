@@ -428,20 +428,21 @@ export default class HTML extends PureComponent {
             }
 
             const classStyles = _getElementClassStyles(attribs, classesStyles);
+            const tempTextStyle = computeTextStyles(
+              element,
+              {
+                defaultTextStyles: this.defaultTextStyles,
+                tagsStyles,
+                classesStyles,
+                baseFontStyle,
+                emSize,
+                ptSize,
+                ignoredStyles,
+                allowedStyles
+              });
             const textElement = data ?
                 <Text
-                  style={computeTextStyles(
-                      element,
-                      {
-                          defaultTextStyles: this.defaultTextStyles,
-                          tagsStyles,
-                          classesStyles,
-                          baseFontStyle,
-                          emSize,
-                          ptSize,
-                          ignoredStyles,
-                          allowedStyles
-                      })}
+                  style={tempTextStyle}
                 >
                     { data }
                 </Text> :
@@ -456,11 +457,14 @@ export default class HTML extends PureComponent {
             .filter((s) => s !== undefined);
 
             const renderersProps = {};
+            let temp = {}
             if (Wrapper === Text) {
                 renderersProps.selectable = this.props.textSelectable;
+                temp = tempTextStyle;
+
             }
             return (
-                <Wrapper key={key} style={style} {...renderersProps}>
+                <Wrapper key={key} style={[style, temp]} {...renderersProps}>
                     { textElement }
                     { childElements }
                 </Wrapper>
