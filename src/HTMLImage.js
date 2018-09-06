@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Image, View, Modal, SafeAreaView, Text, TouchableOpacity } from 'react-native';
+import { Image, View, Modal, SafeAreaView, Text, TouchableOpacity, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import FastImage from 'react-native-fast-image';
@@ -138,11 +138,18 @@ export default class HTMLImage extends PureComponent {
         return (
             <View>
                 <TouchableOpacity onPress={()=>this.setState({modalVisible: true})}>
+                  {Platform.OS === "ios" ?
                     <FastImage
-                        source={source}
-                        style={[style, { width: this.state.width, height: this.state.height}]}
-                        {...props}
+                      source={source}
+                      style={[style, { width: this.state.width, height: this.state.height }]}
+                      {...props}
+                    /> :
+                    <Image
+                      source={source}
+                      style={[style, { width: this.state.width, height: this.state.height }]}
+                      {...props}
                     />
+                  }
                 </TouchableOpacity>
                 <Modal
                     visible={this.state.modalVisible}
