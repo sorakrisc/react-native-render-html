@@ -41,9 +41,9 @@ export default class HTMLImage extends PureComponent {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!this.state.loaded) {
-      this.getImageSize(nextProps);
-    }
+    // if (!this.state.loaded) {
+    //   this.getImageSize(nextProps);
+    // }
   }
 
   getDimensionsFromStyle (style, height, width) {
@@ -88,25 +88,52 @@ export default class HTMLImage extends PureComponent {
         loaded: true
       });
     }
-    // Fetch image dimensions only if they aren't supplied or if with or height is missing
-    Image.getSize(
-      source.uri,
-      (originalWidth, originalHeight) => {
-        if (!imagesMaxWidth) {
-          return this.setState({ width: originalWidth, height: originalHeight, loaded: true });
-        }
-        const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
-        const optimalHeight = (optimalWidth * originalHeight) / originalWidth;
-        this.setState({ width: optimalWidth, height: optimalHeight, error: false, loaded: true });
-      },
-      () => {
+    // // Fetch image dimensions only if they aren't supplied or if with or height is missing
+    // Image.getSize(
+    //   source.uri,
+    //   (originalWidth, originalHeight) => {
+    //     if (!imagesMaxWidth) {
+    //       return this.setState({ width: originalWidth, height: originalHeight, loaded: true });
+    //     }
+    //     const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
+    //     const optimalHeight = (optimalWidth * originalHeight) / originalWidth;
+    //     this.setState({ width: optimalWidth, height: optimalHeight, error: false, loaded: true });
+    //   },
+    //   () => {
+    //
+    //     if (!this.state.loaded) {
+    //       this.setState({ error: true });
+    //     }
+    //
+    //   }
+    // );
+  }
 
-        if (!this.state.loaded) {
-          this.setState({ error: true });
-        }
+  _onLoad (e) {
 
-      }
-    );
+    const { imagesMaxWidth } = this.props;
+    const originalWidth = e.nativeEvent.width;
+    const originalHeight = e.nativeEvent.height;
+
+    if (!imagesMaxWidth) {
+      return this.setState({
+        width: originalWidth,
+        height: originalHeight,
+        originalWidth,
+        originalHeight,
+        loaded: true
+      });
+    }
+    const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
+    const optimalHeight = (optimalWidth * originalHeight) / originalWidth;
+    this.setState({
+      width: optimalWidth,
+      height: optimalHeight,
+      originalWidth,
+      originalHeight,
+      error: false,
+      loaded: true
+    });
   }
 
   _renderHeader () {
@@ -137,6 +164,8 @@ export default class HTMLImage extends PureComponent {
     const images = [{
       // Simplest usage.
       url: source.uri,
+      width: this.state.originalWidth,
+      height: this.state.originalHeight,
       // You can pass props to <Image />.
       props: {
         source: source
@@ -145,18 +174,13 @@ export default class HTMLImage extends PureComponent {
     return (
       <View>
         <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
-          {Platform.OS === "ios" ?
+          
             <FastImage
               source={source}
               style={[style, { width: this.state.width, height: this.state.height }]}
-              {...props}
-            /> :
-            <Image
-              source={source}
-              style={[style, { width: this.state.width, height: this.state.height }]}
+              onLoad={this._onLoad.bind(this)}
               {...props}
             />
-          }
         </TouchableOpacity>
         <Modal
           visible={this.state.modalVisible}
