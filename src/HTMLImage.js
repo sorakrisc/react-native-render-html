@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Image, Modal, Platform, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import PropTypes from "prop-types";
 import ImageViewer from "react-native-image-zoom-viewer";
 import FastImage from "react-native-fast-image";
@@ -81,10 +81,10 @@ export default class HTMLImage extends PureComponent {
     const { source, imagesMaxWidth, style, height, width } = props;
     const { styleWidth, styleHeight } = this.getDimensionsFromStyle(style, height, width);
 
-    if (styleWidth && styleHeight) {
+    if (styleWidth || styleHeight) {
       return this.setState({
-        width: typeof styleWidth === "string" && styleWidth.search("%") !== -1 ? styleWidth : parseInt(styleWidth, 10),
-        height: typeof styleHeight === "string" && styleHeight.search("%") !== -1 ? styleHeight : parseInt(styleHeight, 10),
+        styleWidth: typeof styleWidth === "string" && styleWidth.search("%") !== -1 ? styleWidth : parseInt(styleWidth, 10),
+        styleHeight: typeof styleHeight === "string" && styleHeight.search("%") !== -1 ? styleHeight : (styleHeight ? parseInt(styleHeight, 10) : undefined),
         loaded: true
       });
     }
@@ -174,13 +174,16 @@ export default class HTMLImage extends PureComponent {
     return (
       <View>
         <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
-          
-            <FastImage
-              source={source}
-              style={[style, { width: this.state.width, height: this.state.height }]}
-              onLoad={this._onLoad.bind(this)}
-              {...props}
-            />
+
+          <FastImage
+            source={source}
+            style={[style, {
+              width: this.state.styleWidth ? this.state.styleWidth : this.state.width,
+              aspectRatio: this.state.width / this.state.height
+            }]}
+            onLoad={this._onLoad.bind(this)}
+            {...props}
+          />
         </TouchableOpacity>
         <Modal
           visible={this.state.modalVisible}
